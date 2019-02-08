@@ -1,0 +1,73 @@
+version: '2'
+
+services:
+    nginx-proxy:
+        image: jwilder/nginx-proxy
+        container_name: nginx-proxy
+        restart: always
+        ports:
+        - 80:80
+        volumes:
+        - /var/run/docker.sock:/tmp/docker.sock:ro
+        - ./configuration/nginx/default.conf:/etc/nginx/conf.d/nginx.conf
+
+    mdb:
+        image: mariadb
+        container_name: mdb
+        restart: always
+        ports:
+        - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        #volumes:
+        #- ./storage/mariadb:/var/lib/mysql
+
+    mailhog:
+        container_name: mailhog
+        image: mailhog/mailhog
+        environment:
+            VIRTUAL_HOST: mailhog.local
+            VIRTUAL_PORT: 8025
+        restart: always
+        ports:
+        - 8025:8025
+        - 1025:1025
+
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb
+        restart: always
+        environment:
+        - MONGO_DATA_DIR=/data/db
+        - MONGO_LOG_DIR=/dev/null
+        volumes:
+        - ./storage/mongodb:/data/db
+        ports:
+        - 27017:27017
+        command: mongod --smallfiles --logpath=/dev/null
+
+    portainer:
+        image: portainer/portainer:latest
+        container_name: portainer
+        restart: always
+        environment:
+            VIRTUAL_HOST: portainer.local
+        ports:
+        - 9000:9000
+        volumes:
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - ./storage/portainer_data:/data
+
+    docker-test:
+        container_name: docker-test
+        restart: always
+        build:
+            context: .
+            dockerfile: image/Dockerfile
+        environment:
+            VIRTUAL_HOST: docker-test.local
+        working_dir: /var/www
+        tty: true
+        volumes:
+        - ./../docker-test:/var/www
+        - ./configuration/docker-test.conf:/etc/apache2/sites-available/000-default.conf

@@ -1,2 +1,2 @@
 # docker-example
-Php 7.2 / Apache / Mailhog / Adminer / MariaDb / Mongo Db / Portainer
+Php 7.2 / Apache / Mailhog / MariaDb / Mongo Db / Portainer
