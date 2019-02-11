@@ -23,8 +23,8 @@ services:
         #- ./storage/mariadb:/var/lib/mysql
 
     mailhog:
-        container_name: mailhog
         image: mailhog/mailhog
+        container_name: mailhog
         environment:
             VIRTUAL_HOST: mailhog.local
             VIRTUAL_PORT: 8025
